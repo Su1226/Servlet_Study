@@ -1,6 +1,7 @@
 package com.korit.springboot.ioc;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 /*
@@ -30,13 +31,43 @@ import org.springframework.stereotype.Component;
     스피링이 필요한 객체를 자동으로 찾아서 주입함.
  */
 
+/*
+    Component의 종류
+    1. @Component : 특정 기능이 정해져 있지 않은 객채(나머지 객체) (filter, converter, exception)
+    2. @Controller : HTTP 요청 및 응답을 처리하는 객체
+    3. @Service : 비즈니스 로직 또는 메인 로직을 정의하고 처리하는 객체
+    4. @Repository : Database와 관련된 로직을 정의하고 처리하는 객체
+    5. @Configuration : 설정 로직을 정의하고 처리하는 객체 또는 직접 생성 후 IoC 등록을 필요로 하는 Bean 설정
+
+    해당 Component를 사용하지 못하는 경우가 있다.
+    1. 컴포넌트 스캔 범위 밖에 있는 경우(해당 클래스가 다른 패키지에 있을 때)
+    2. 빈으로는 등록되는 클래스이지만, 애노테이션을 안 썼을 경우
+    3. 인터페이스만 있고 구현체가 없을 때
+    4. 조건부 등록 조건을 만족하지 못한 경우(@Conditional, @Profile 등)
+    5. 컴파일 오류나 순환 참조의 문제가 생기는 경우
+        ㄴ 예를 들어, A가 B를 주입받고, B도 A를 주입받는 경우
+        ㄴ @Autowired에서 순환 참조 오류 발생이 가능하다. (특히 생성자 주입 때)
+    6. XML 기반으로만 설정하고 있을 때
+
+    @Component가 붙은 각 각의 컨테이너 이름은 클래스명이 된다.
+    만약 카멜표기법으로 클래스명을 작성하게 되면, 앞의 대문자가 소문자로 바뀌어 저장된다.
+ */
+
 @Component
 public class SmartPhone {
 
-    @Autowired      // 자동으로 객체를 주입하도록 하는 기능
+    // @Autowired      // 자동으로 객체를 주입하도록 하는 기능
+//    @Qualifier(value = "samsungBattery")    // 여러 베터리를 받는 경우, 해당 애노테이션을 사용하여 베터리를 지정해줄 수 있다.
+//    private Battery battery;
+
+    /*
+        항상 @Qualifier를 쓰지 않고도 바로 사용할 수 있도록
+        SmartPhone이 받는 파라미터에 애초에 넣어준다.
+     */
+
     private Battery battery;
 
-    public SmartPhone(Battery battery) {
+    public SmartPhone(SamsungBattery battery) {
         this.battery = battery;
     }
 
